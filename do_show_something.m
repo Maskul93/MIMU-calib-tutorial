@@ -10,9 +10,9 @@
 Fs = 1200;  % Sampling frequency
 g = 9.81; % Gravity acceleration
 
-load('./acc_triax.mat');  % Load accelerometer calibration trial
-load('./gyr_static.mat'); % Load static gyroscope trial
-load('./mag_sphere.mat'); % Load sphere magnetometer trial
+load('./data/acc_triax.mat');  % Load accelerometer calibration trial
+load('./data/gyr_static.mat'); % Load static gyroscope trial
+load('./data/mag_sphere.mat'); % Load sphere magnetometer trial
 
 %% Compute gyroscope STATIC bias
 bias_gyr = get_gyr_bias(static_gyr);
