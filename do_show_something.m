@@ -1,15 +1,18 @@
-% clear all
-close all
-% clc
-% 
-D1 = get_trident('./data/StaticGYR.csv');
-D2 = get_trident('./data/StaticACC.csv');
-D3 = get_trident('./data/StaticMAG.csv');
-Fs = 1200;
+%% Supplementary material for MIMUs calibration tutorial %%
+% Creator: Guido Mascia, MSc, PhD Student at University of Rome "Foro Italico"
+% Last Modified: 09/11/21
 
-static_gyr = D1.FOOT.gyr;
-static_acc = D2.FOOT.acc;
-static_mag = D3.FOOT.mag;
+% clear all
+% close all
+% clc
+
+% Global Variables
+Fs = 1200;  % Sampling frequency
+g = 9.81; % Gravity acceleration
+
+load('./acc_triax.mat');  % Load accelerometer calibration trial
+load('./gyr_static.mat'); % Load static gyroscope trial
+load('./mag_sphere.mat'); % Load sphere magnetometer trial
 
 %% Compute gyroscope STATIC bias
 bias_gyr = get_gyr_bias(static_gyr);
@@ -28,9 +31,9 @@ ylim([min(theta), 0.1]);
 ylabel('Angle (rad)')
 sgtitle('Biased (blue) vs. Unbiased (red) gyroscope')
 
-%% Compute accelerometer offset
+%% Compute accelerometer offset and cross-axis sensitivity
 [offs, sens] = get_acc_calib(static_acc, Fs);
-static_acc_unbiased = ((static_acc(:,1)/9.81 - offs(1)) * sens(1)) * 9.81;
+static_acc_unbiased = ((static_acc(:,1)/g - offs(1)) * sens(1)) * g;
 
 t_acc = linspace(0, length(static_acc)/Fs, length(static_acc));
 figure
@@ -44,7 +47,7 @@ sgtitle('Uncalibrated (blue) vs. Calibrated (red) accelerometer')
 [bias, scalef] = get_mag_calib(static_mag);
 N = length(static_mag);
 
-kmest = diag(scalef); % scalef
+kmest = diag(scalef); % scale factor
 bmest = repmat(bias,N,1); % bias
 static_mag_unbiased = kmest \ (static_mag - bmest)';    
 static_mag_unbiased = static_mag_unbiased';
